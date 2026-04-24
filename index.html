@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tangled Bookshelf</title>
+
+<style>
+
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box;}
+
+/* BODY */
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#f9e0ff,#ffe8f4,#fff2cc);
+}
+
+/* HOME SCREEN */
+.home{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+.home h1{
+    font-size:50px;
+    margin-bottom:10px;
+}
+
+.home p{
+    margin-bottom:40px;
+    font-style:italic;
+}
+
+/* CARDS */
+.container{
+    display:flex;
+    gap:30px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.card{
+    width:200px;
+    padding:20px;
+    background:rgba(255,255,255,0.5);
+    backdrop-filter:blur(10px);
+    border-radius:15px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:scale(1.05);
+}
+
+.card img{
+    width:90px;
+}
+
+/* APP */
+.app{
+    display:none;
+    height:100vh;
+}
+
+.sidebar{
+    width:250px;
+    background:rgba(255,255,255,0.3);
+    backdrop-filter:blur(15px);
+    padding:20px;
+}
+
+.menu-item{
+    padding:12px;
+    cursor:pointer;
+    border-radius:10px;
+}
+
+.menu-item:hover,.active{
+    background:rgba(255,255,255,0.6);
+}
+
+.main{
+    flex:1;
+    padding:20px;
+    overflow:auto;
+}
+
+.layout{
+    display:flex;
+    height:100%;
+}
+
+/* BOOKS */
+.books{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:15px;
+}
+
+.book{
+    background:white;
+    padding:10px;
+    border-radius:10px;
+    position:relative;
+}
+
+.delete{
+    position:absolute;
+    right:10px;
+    top:5px;
+    cursor:pointer;
+}
+
+/* INPUT */
+input,button{
+    padding:10px;
+    margin:10px 5px;
+    border:none;
+    border-radius:10px;
+}
+
+button{
+    background:#d291ff;
+    color:white;
+}
+
+/* FLOATING LANTERNS */
+.lantern{
+    position:fixed;
+    bottom:-100px;
+    width:40px;
+    height:60px;
+    background:radial-gradient(circle,#fff7b2,#ffd94d);
+    border-radius:10px;
+    opacity:0.8;
+    animation:floatLantern linear forwards;
+    pointer-events:none;
+    z-index:0;
+}
+
+/* Glow effect */
+.lantern::after{
+    content:"";
+    position:absolute;
+    width:80px;
+    height:80px;
+    background:radial-gradient(circle,rgba(255,223,100,0.4),transparent);
+    top:-10px;
+    left:-20px;
+}
+
+/* Animation */
+@keyframes floatLantern{
+    from{
+        transform:translateY(0) translateX(0);
+    }
+    to{
+        transform:translateY(-120vh) translateX(30px);
+    }
+}
+
+.lantern{
+    animation: floatLantern linear forwards, glow 2s infinite alternate;
+}
+
+@keyframes glow{
+    from{opacity:0.6;}
+    to{opacity:1;}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HOME PAGE -->
+<div class="home" id="home">
+
+<h1>☀️ My Tangled Bookshelf 🌸</h1>
+<p>"Venture outside your comfort zone." – Rapunzel</p>
+
+<div class="container">
+
+<div class="card" onclick="openGenre('romance')">
+<img src="https://i.imgur.com/v9R2k0S.png">
+<h3>Rapunzel's Romance Tower💕</h3>
+</div>
+
+<div class="card" onclick="openGenre('mystery')">
+<img src="https://i.imgur.com/z1Y5P6s.png">
+<h3>Eugene's Adventure & Mystery ⚔️</h3>
+</div>
+
+<div class="card" onclick="openGenre('selfdev')">
+<img src="https://i.imgur.com/Y9Xv6iG.png">
+<h3>Pascal's Wisdom Garden🌿</h3>
+</div>
+
+<div class="card" onclick="openGenre('dark')">
+<img src="https://i.imgur.com/Y9Xv6iG.png">
+<h3>Mother Gothel's Forbidden Library 🖤</h3>
+</div>
+
+<div class="card" onclick="openGenre('classics')">
+<img src="https://i.imgur.com/Y9Xv6iG.png">
+<h3>Kingdom Classics📜</h3>
+</div>
+
+<div class="card" onclick="openGenre('study')">
+<img src="https://i.imgur.com/Y9Xv6iG.png">
+<h3>Royal Study Room 📚</h3>
+</div>
+
+<div class="card" onclick="openGenre('current')">
+<img src="https://i.imgur.com/Y9Xv6iG.png">
+<h3>Currently Reading <3 </h3>
+</div>
+
+</div>
+
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+
+<div class="layout">
+
+<div class="sidebar">
+<div class="menu-item" onclick="switchGenre('romance',this)">Romance</div>
+<div class="menu-item" onclick="switchGenre('mystery',this)">Mystery</div>
+<div class="menu-item" onclick="switchGenre('selfdev',this)">Self Development</div>
+<div class="menu-item" onclick="switchGenre('dark',this)">Sadcore</div>
+<div class="menu-item" onclick="switchGenre('study',this)">Educational</div>
+<div class="menu-item" onclick="switchGenre('classics',this)">Classics</div>
+<div class="menu-item" onclick="switchGenre('current',this)">Currently Reading</div>
+<div class="menu-item" onclick="goHome()">🏠 Home</div>
+</div>
+
+<div class="main">
+
+<h2 id="title"></h2>
+
+<input id="bookInput" placeholder="Add book">
+<button onclick="addBook()">Add</button>
+
+<div class="books" id="bookList"></div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* PRELOAD YOUR BOOKS */
+const defaultData = {
+
+romance:[
+"Twisted Love","Twisted Games","Twisted Lies",
+"The Love Hypothesis","The Spanish Love Deception",
+"The American Roommate Experiment","Love, Theoretically",
+"Better Than The Movies","Dating Dr Dil",
+"It Ends With Us","It Starts With Us",
+"Seven Husbands of Evelyn Hugo"
+],
+
+mystery:[
+"Verity","The Housemaid","One Of Us Is Lying",
+"The Guest List","The Silent Patient",
+"Haunting Adeline 1","Haunting Adeline 2",
+"The Good Girl Trilogy"
+],
+
+selfdev:[
+"Atomic Habits","Ikigai",
+"The Subtle Art of Not Giving a F*ck",
+"Read People Like a Book",
+"How To Win Friends and Influence People",
+"The Mountain Is You","The Art of Seduction",
+"Do Epic Shit","48 Laws of Power",
+"Rich Dad Poor Dad","The Art of Witty Banter",
+"Surrounded by Idiots","The Art of Being Alone"
+],
+
+classics:[
+"Oliver Twist","Animal Farm","A Scarlet Letter",
+"The Alchemist","The Kite Runner",
+"A Thousand Splendid Suns","The Book Thief",
+"Men Without Women","The Palace of Illusions"
+],
+
+study:[
+"NCERT Macroeconomics", "NCERT History", "NCERT Computer Science", "NCERT Political Science"
+],
+
+dark:[
+"Mein Kampf", "Why I killed Gandhi", "A Little Life"
+],
+
+current:[
+"King of Pride"
+]
+
+};
+
+/* INIT STORAGE */
+for(let key in defaultData){
+    if(!localStorage.getItem(key)){
+        localStorage.setItem(key, JSON.stringify(defaultData[key]));
+    }
+}
+
+let currentGenre = "";
+
+/* NAVIGATION */
+function openGenre(genre){
+    document.getElementById("home").style.display="none";
+    document.getElementById("app").style.display="block";
+    switchGenre(genre);
+}
+
+function goHome(){
+    document.getElementById("home").style.display="flex";
+    document.getElementById("app").style.display="none";
+}
+
+/* SWITCH */
+function switchGenre(genre){
+    currentGenre = genre;
+
+    const titles={
+        romance:"Romance 💕",
+        mystery:"Mystery ⚔️",
+        selfdev:"Self Development 🌿",
+        dark:"Sadcore :(",
+        study:"Educational",
+        classics:"Classics 📜",
+        current:"Ongoing :3"
+    };
+
+    document.getElementById("title").innerText = titles[genre];
+    loadBooks();
+}
+
+/* LOAD */
+function loadBooks(){
+    const books = JSON.parse(localStorage.getItem(currentGenre)) || [];
+    const container = document.getElementById("bookList");
+    container.innerHTML="";
+
+    books.forEach((b,i)=>{
+        const div=document.createElement("div");
+        div.className="book";
+        div.innerHTML = `${b} <span class="delete" onclick="deleteBook(${i})">❌</span>`;
+        container.appendChild(div);
+    });
+}
+
+/* ADD */
+function addBook(){
+    const input=document.getElementById("bookInput");
+    const val=input.value.trim();
+    if(!val) return;
+
+    const books = JSON.parse(localStorage.getItem(currentGenre));
+    books.push(val);
+
+    localStorage.setItem(currentGenre,JSON.stringify(books));
+    input.value="";
+    loadBooks();
+}
+
+/* DELETE */
+function deleteBook(i){
+    const books = JSON.parse(localStorage.getItem(currentGenre));
+    books.splice(i,1);
+    localStorage.setItem(currentGenre,JSON.stringify(books));
+    loadBooks();
+}
+
+/* CREATE FLOATING LANTERNS */
+function createLantern(){
+
+    const lantern = document.createElement("div");
+    lantern.className = "lantern";
+
+    // random position
+    lantern.style.left = Math.random()*100 + "vw";
+
+    // random speed
+    lantern.style.animationDuration = (12 + Math.random()*8) + "s";
+
+    // random size (more aesthetic 💅)
+    const size = 30 + Math.random()*30;
+    lantern.style.width = size + "px";
+    lantern.style.height = size*1.5 + "px";
+
+    document.body.appendChild(lantern);
+
+    // remove after animation
+    setTimeout(()=>{
+        lantern.remove();
+    },20000);
+}
+
+/* CONTROL DENSITY (important for performance) */
+setInterval(createLantern, 1800);
+
+
+</script>
+
+</body>
+</html>
